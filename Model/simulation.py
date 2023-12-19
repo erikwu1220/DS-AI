@@ -1,5 +1,6 @@
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Simulation():
@@ -15,6 +16,29 @@ class Simulation():
         self.wd = wd
         self.vx = vx
         self.vy = vy
+
+        # Store coordinates for later
+        self.x = np.arange(0, topography.shape[0])
+        self.y = np.arange(0, topography.shape[1])
+
+    def return_timestep(self, timestep):
+        """
+        timestep: timestep at which you want the data to be returned
+
+        returns: wd, vx, vy at specified timestep
+        """
+        return self.wd[timestep], self.vx[timestep], self.vy[timestep]
+
+
+    def plot_vector(self, timestep, cmap_topo="terrain", cmap_flood="Blues"):
+
+        fig, axs = plt.subplots(1,2,figsize=(14,6))
+
+        axs[0].imshow(self.topography, cmap=cmap_topo, origin="lower")
+        axs[1].quiver(self.x, self.y, self.vx[timestep], self.vy[timestep], cmap=cmap_flood)
+
+        return fig
+
 
     def plot_animation(self, cmap_topo="terrain", cmap_flood="Blues"):
         fig, axs = plt.subplots(1,2,figsize=(14,6))
