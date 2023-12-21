@@ -1,1 +1,0 @@
-Reorganized data suitable for training (still needs to be normalized)
