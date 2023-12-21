@@ -4,6 +4,32 @@ import numpy as np
 
 
 class Simulation():
+    @staticmethod
+    def load_simulation(save_folder, sim_number, number_grids):
+        """
+        Static method to create a simulation from a filepath.
+        - save_folder: string, that provides the filepath of where to look for the following folders:
+            - DEM (topography)
+            - VX (x-velocities)
+            - VY (y-velocities)
+            - WD (waterlevels)
+        - sim_number: int or float, which simulation number to load from this filepath.
+            - Training: 1 - 80
+            - Test 1: 501-520
+            - Test 2: 10001-10020
+        - number_grid: int, predefined grid dimension to help shape the data in the correct form.
+
+        return:
+        - Simulation object.
+        """
+        topo = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, 2].reshape(number_grids,number_grids)
+        wd = np.loadtxt(f"{save_folder}\\WD\\WD_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        vx = np.loadtxt(f"{save_folder}\\VX\\VX_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        vy = np.loadtxt(f"{save_folder}\\vy\\vy_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        
+        return Simulation(topo, wd, vx, vy)
+    
+
     def __init__(self, topography, wd, vx, vy):
         """
         A class that contains for a simulation:
