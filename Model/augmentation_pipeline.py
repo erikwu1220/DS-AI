@@ -95,6 +95,6 @@ class AugmentationPipeline():
             vx_aug[i] = vxvy_aug[:,:,0]
             vy_aug[i] = vxvy_aug[:,:,1]
 
-        aug_sim = Simulation(topo_aug, wd_aug, vx_aug, vy_aug)
+        aug_sim = Simulation(sim.coordinates, topo_aug, wd_aug, vx_aug, vy_aug)
         
         return aug_sim

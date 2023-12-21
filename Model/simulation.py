@@ -22,15 +22,16 @@ class Simulation():
         return:
         - Simulation object.
         """
+        coords = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, :2]
         topo = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, 2].reshape(number_grids,number_grids)
         wd = np.loadtxt(f"{save_folder}\\WD\\WD_{sim_number}.txt").reshape(-1,number_grids,number_grids)
         vx = np.loadtxt(f"{save_folder}\\VX\\VX_{sim_number}.txt").reshape(-1,number_grids,number_grids)
         vy = np.loadtxt(f"{save_folder}\\vy\\vy_{sim_number}.txt").reshape(-1,number_grids,number_grids)
         
-        return Simulation(topo, wd, vx, vy)
+        return Simulation(coords, topo, wd, vx, vy)
     
 
-    def __init__(self, topography, wd, vx, vy):
+    def __init__(self, coordinates, topography, wd, vx, vy):
         """
         A class that contains for a simulation:
         - topography:   2D array
@@ -38,6 +39,7 @@ class Simulation():
         - vx:           3D array
         - vy:           3D array
         """
+        self.coordinates = coordinates
         self.topography = topography
         self.wd = wd
         self.vx = vx
@@ -55,6 +57,24 @@ class Simulation():
         """
         return self.wd[timestep], self.vx[timestep], self.vy[timestep]
 
+
+    def save_simulation(self, save_folder, sim_number):
+        """
+        Saves a simulation similarly to the syntax used in the original "raw_data" folder.
+
+        save_folder: str, location of DEM, VX, VY, WD folders.
+
+        return: -
+        """
+        dem = np.vstack((np.round(self.coordinates.T, 1), self.topography.reshape(-1)))
+        # print(dem.T)
+
+        np.savetxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt", dem.T)
+        np.savetxt(f"{save_folder}\\WD\\WD_{sim_number}.txt", self.wd.reshape(-1))
+        np.savetxt(f"{save_folder}\\VX\\VX_{sim_number}.txt", self.vx.reshape(-1))
+        np.savetxt(f"{save_folder}\\vy\\vy_{sim_number}.txt", self.vy.reshape(-1))
+
+        return
 
     def plot_vector(self, timestep, cmap_topo="terrain", cmap_flood="Blues"):
 
