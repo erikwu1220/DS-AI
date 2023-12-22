@@ -69,10 +69,14 @@ class Simulation():
         dem = np.vstack((np.round(self.coordinates.T, 1), self.topography.reshape(-1)))
         # print(dem.T)
 
-        np.savetxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt", dem.T)
-        np.savetxt(f"{save_folder}\\WD\\WD_{sim_number}.txt", self.wd.reshape(-1))
-        np.savetxt(f"{save_folder}\\VX\\VX_{sim_number}.txt", self.vx.reshape(-1))
-        np.savetxt(f"{save_folder}\\vy\\vy_{sim_number}.txt", self.vy.reshape(-1))
+        fmt = '%1.1f', '%1.1f', '%1.5f'
+        np.savetxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt", dem.T, fmt=fmt)
+
+        fmt = '%1.4f'
+        format_size = self.wd.shape[1]**2
+        np.savetxt(f"{save_folder}\\WD\\WD_{sim_number}.txt", self.wd.reshape(format_size,-1), fmt=fmt)
+        np.savetxt(f"{save_folder}\\VX\\VX_{sim_number}.txt", self.vx.reshape(format_size,-1), fmt=fmt)
+        np.savetxt(f"{save_folder}\\VY\\VY_{sim_number}.txt", self.vy.reshape(format_size,-1), fmt=fmt)
 
         return
 
