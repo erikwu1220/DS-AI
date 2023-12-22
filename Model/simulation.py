@@ -4,7 +4,34 @@ import numpy as np
 
 
 class Simulation():
-    def __init__(self, topography, wd, vx, vy):
+    @staticmethod
+    def load_simulation(save_folder, sim_number, number_grids):
+        """
+        Static method to create a simulation from a filepath.
+        - save_folder: string, that provides the filepath of where to look for the following folders:
+            - DEM (topography)
+            - VX (x-velocities)
+            - VY (y-velocities)
+            - WD (waterlevels)
+        - sim_number: int or float, which simulation number to load from this filepath.
+            - Training: 1 - 80
+            - Test 1: 501-520
+            - Test 2: 10001-10020
+        - number_grid: int, predefined grid dimension to help shape the data in the correct form.
+
+        return:
+        - Simulation object.
+        """
+        coords = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, :2]
+        topo = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, 2].reshape(number_grids,number_grids)
+        wd = np.loadtxt(f"{save_folder}\\WD\\WD_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        vx = np.loadtxt(f"{save_folder}\\VX\\VX_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        vy = np.loadtxt(f"{save_folder}\\vy\\vy_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        
+        return Simulation(coords, topo, wd, vx, vy)
+    
+
+    def __init__(self, coordinates, topography, wd, vx, vy):
         """
         A class that contains for a simulation:
         - topography:   2D array
@@ -12,6 +39,7 @@ class Simulation():
         - vx:           3D array
         - vy:           3D array
         """
+        self.coordinates = coordinates
         self.topography = topography
         self.wd = wd
         self.vx = vx
@@ -29,6 +57,28 @@ class Simulation():
         """
         return self.wd[timestep], self.vx[timestep], self.vy[timestep]
 
+
+    def save_simulation(self, save_folder, sim_number):
+        """
+        Saves a simulation similarly to the syntax used in the original "raw_data" folder.
+
+        save_folder: str, location of DEM, VX, VY, WD folders.
+
+        return: -
+        """
+        dem = np.vstack((np.round(self.coordinates.T, 1), self.topography.reshape(-1)))
+        # print(dem.T)
+
+        fmt = '%1.1f', '%1.1f', '%1.5f'
+        np.savetxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt", dem.T, fmt=fmt)
+
+        fmt = '%1.4f'
+        format_size = self.wd.shape[1]**2
+        np.savetxt(f"{save_folder}\\WD\\WD_{sim_number}.txt", self.wd.reshape(format_size,-1), fmt=fmt)
+        np.savetxt(f"{save_folder}\\VX\\VX_{sim_number}.txt", self.vx.reshape(format_size,-1), fmt=fmt)
+        np.savetxt(f"{save_folder}\\VY\\VY_{sim_number}.txt", self.vy.reshape(format_size,-1), fmt=fmt)
+
+        return
 
     def plot_vector(self, timestep, cmap_topo="terrain", cmap_flood="Blues"):
 
