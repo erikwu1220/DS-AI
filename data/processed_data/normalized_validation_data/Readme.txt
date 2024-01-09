@@ -1,1 +1,0 @@
-Normalized training data, readily useable for validating the model.
