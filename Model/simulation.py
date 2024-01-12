@@ -1,9 +1,9 @@
-import glob
 import os
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 
 
 class Simulation():
@@ -25,11 +25,26 @@ class Simulation():
         return:
         - Simulation object.
         """
-        coords = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, :2]
-        topo = np.loadtxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt")[:, 2].reshape(number_grids,number_grids)
-        wd = np.loadtxt(f"{save_folder}\\WD\\WD_{sim_number}.txt").reshape(-1,number_grids,number_grids)
-        vx = np.loadtxt(f"{save_folder}\\VX\\VX_{sim_number}.txt").reshape(-1,number_grids,number_grids)
-        vy = np.loadtxt(f"{save_folder}\\vy\\vy_{sim_number}.txt").reshape(-1,number_grids,number_grids)
+        fnames = os.listdir(save_folder + "\\DEM")
+        name = fnames[sim_number]
+
+        if name.isupper():
+            name_dict = {"DEM":"DEM",
+                         "WD": "WD",
+                         "VX": "VX",
+                         "VY": "VY"}
+        else:
+            name_dict = {"DEM":"dem",
+                         "WD": "wd",
+                         "VX": "vx",
+                         "VY": "vy"}
+
+
+        coords = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, :2]
+        topo = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
+        wd = np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
+        vx = np.loadtxt(f"{save_folder}\\VX\\" + name_dict["VX"] + name[3:]).reshape(-1,number_grids,number_grids)
+        vy = np.loadtxt(f"{save_folder}\\vy\\" + name_dict["VY"] + name[3:]).reshape(-1,number_grids,number_grids)
         
         return Simulation(coords, topo, wd, vx, vy)
     
@@ -50,21 +65,32 @@ class Simulation():
         """
         fnames = os.listdir(save_folder + "\\DEM")
 
+        if fnames[0].isupper():
+            name_dict = {"DEM":"DEM",
+                         "WD": "WD",
+                         "VX": "VX",
+                         "VY": "VY"}
+        else:
+            name_dict = {"DEM":"dem",
+                         "WD": "wd",
+                         "VX": "vx",
+                         "VY": "vy"}
+
         if sim_amount > len(fnames):
             raise Exception(f"Please select an amount smaller than {len(fnames)}.")
         
         np.random.seed(random_state)
-        idx = np.random.randint(0, len(fnames), sim_amount)
+        idx = random.sample(range(len(fnames)), sim_amount)
         sims = []
 
         for i in range(sim_amount):
             name = fnames[idx[i]]
 
-            coords = np.loadtxt(f"{save_folder}\\DEM\\{name}")[:, :2]
-            topo = np.loadtxt(f"{save_folder}\\DEM\\{name}")[:, 2].reshape(number_grids,number_grids)
-            wd = np.loadtxt(f"{save_folder}\\WD\\wd{name[3:]}").reshape(-1,number_grids,number_grids)
-            vx = np.loadtxt(f"{save_folder}\\VX\\vx{name[3:]}").reshape(-1,number_grids,number_grids)
-            vy = np.loadtxt(f"{save_folder}\\vy\\vy{name[3:]}").reshape(-1,number_grids,number_grids)
+            coords = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, :2]
+            topo = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
+            wd = np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
+            vx = np.loadtxt(f"{save_folder}\\VX\\" + name_dict["VX"] + name[3:]).reshape(-1,number_grids,number_grids)
+            vy = np.loadtxt(f"{save_folder}\\vy\\" + name_dict["VY"] + name[3:]).reshape(-1,number_grids,number_grids)
 
             sims.append(Simulation(coords, topo, wd, vx, vy))
 
@@ -139,7 +165,6 @@ class Simulation():
         return: -
         """
         dem = np.vstack((np.round(self.coordinates.T, 1), self.topography.reshape(-1)))
-        # print(dem.T)
 
         fmt = '%1.1f', '%1.1f', '%1.5f'
         np.savetxt(f"{save_folder}\\DEM\\DEM_{sim_number}.txt", dem.T, fmt=fmt)
