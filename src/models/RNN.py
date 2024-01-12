@@ -1,3 +1,5 @@
+import torch.nn as nn
+
 class SimpleRNN(nn.Module):
     def __init__(self, hidden_size, output_size):
         super(SimpleRNN, self).__init__()
@@ -22,7 +24,7 @@ class SimpleRNN(nn.Module):
 
         return x
 
-import torch.nn as nn
+
 
 class AdvancedRNN(nn.Module):
     def __init__(self, hidden_size, output_size, num_steps):
