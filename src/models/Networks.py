@@ -82,6 +82,27 @@ class Decoder(nn.Module):
         x = self.dec_blocks[-1](x)
         return x
 
+
+class CNN(nn.Module):
+    def __init__(self, node_features, out_dim=1, n_downsamples=3, initial_hid_dim=64, batch_norm=True,
+                 bias=True):
+        super(CNN, self).__init__()
+        hidden_channels = [initial_hid_dim*2**i for i in range(n_downsamples)]
+        encoder_channels = [node_features]+hidden_channels
+        decoder_channels = list(reversed(hidden_channels))+[out_dim]
+
+        self.encoder = Encoder(encoder_channels, kernel_size=3, padding=1,
+                               bias=bias, batch_norm=batch_norm)
+        self.decoder = Decoder(decoder_channels, kernel_size=3, padding=1,
+                               bias=bias, batch_norm=batch_norm)
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x[-1], x[:-1])
+        x = nn.Sigmoid()(x)
+        return x
+
+
 class AdvancedRNN(nn.Module):
     def __init__(self, hidden_size, output_size, num_steps):
         super(AdvancedRNN, self).__init__()
