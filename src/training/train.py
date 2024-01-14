@@ -1,4 +1,5 @@
-
+import time
+import torch
 
 def evaluate_model(model, test_loader, criterion, device):
     model.eval()  # Set the model to evaluation mode
