@@ -25,7 +25,9 @@ class Simulation():
         return:
         - Simulation object.
         """
-        fnames = os.listdir(save_folder + "\\DEM")
+        dem_folder = "DEM"
+        folder_path = os.path.join(save_folder, dem_folder)
+        fnames = os.listdir(folder_path)
         name = fnames[sim_number]
 
         if name.isupper():
@@ -39,12 +41,22 @@ class Simulation():
                          "VX": "vx",
                          "VY": "vy"}
 
+        dem_path = os.path.join(save_folder, "DEM", name_dict["DEM"] + name[3:])
+        wd_path = os.path.join(save_folder, "WD", name_dict["WD"] + name[3:])
+        vx_path = os.path.join(save_folder, "VX", name_dict["VX"] + name[3:])
+        vy_path = os.path.join(save_folder, "VY", name_dict["VY"] + name[3:])
 
-        coords = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, :2]
-        topo = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
-        wd = np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
-        vx = np.loadtxt(f"{save_folder}\\VX\\" + name_dict["VX"] + name[3:]).reshape(-1,number_grids,number_grids)
-        vy = np.loadtxt(f"{save_folder}\\vy\\" + name_dict["VY"] + name[3:]).reshape(-1,number_grids,number_grids)
+        coords = np.loadtxt(dem_path)[:, :2]
+        topo = np.loadtxt(dem_path)[:, 2].reshape(number_grids, number_grids)
+        wd = np.loadtxt(wd_path).reshape(-1, number_grids, number_grids)
+        vx = np.loadtxt(vx_path).reshape(-1, number_grids, number_grids)
+        vy = np.loadtxt(vy_path).reshape(-1, number_grids, number_grids)
+
+        #coords = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, :2]
+        #topo = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
+        #wd = np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
+        #vx = np.loadtxt(f"{save_folder}\\VX\\" + name_dict["VX"] + name[3:]).reshape(-1,number_grids,number_grids)
+        #vy = np.loadtxt(f"{save_folder}\\vy\\" + name_dict["VY"] + name[3:]).reshape(-1,number_grids,number_grids)
         
         return Simulation(coords, topo, wd, vx, vy)
     
