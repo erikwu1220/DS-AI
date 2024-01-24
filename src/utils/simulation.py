@@ -107,39 +107,41 @@ class Simulation():
             sims.append(Simulation(coords, topo, wd, vx, vy))
 
         return sims
-
-                    
-    # @staticmethod
-    # def load_simulation_processed(save_folder_topo, sim_number_topo, save_folder_data, sim_number_data, number_grids):
-    #     """
-    #     Static method to create a simulation from a filepath.
-    #     - save_folder_topo: string, that provides the filepath of where to look for the following folders:
-    #         - DEM (topography)
-    #     - sim_number_topo: int, float, or string, which topography number to load from this filepath.
-    #         - Training: 1 - 80
-    #         - Test 1: 501-520
-    #         - Test 2: 10001-10020
-    #     - save_folder_data: string, that provides the filepath of where to look for the following folders:
-    #         - VX (x-velocities)
-    #         - VY (y-velocities)
-    #         - WD (waterlevels)
-    #     - sim_number: int or float, which data number to load from this filepath.
-    #         - Training: 1 - 80
-    #         - Test 1: 501-520
-    #         - Test 2: 10001-10020
-    #     - number_grid: int, predefined grid dimension to help shape the data in the correct form.
-
-    #     return:
-    #     - Simulation object.
-    #     """
-    #     coords = np.loadtxt(f"{save_folder_topo}\\DEM\\DEM_{sim_number_topo}.txt")[:, :2]
-    #     topo = np.loadtxt(f"{save_folder_topo}\\DEM\\DEM_{sim_number_topo}.txt")[:, 2].reshape(number_grids,number_grids)
-    #     wd = np.loadtxt(f"{save_folder_data}\\WD\\wd_tra_norm{sim_number_data}").reshape(-1,number_grids,number_grids)
-    #     vx = np.loadtxt(f"{save_folder_data}\\VX\\vx_tra_norm{sim_number_data}").reshape(-1,number_grids,number_grids)
-    #     vy = np.loadtxt(f"{save_folder_data}\\VY\\vy_tra__norm{sim_number_data}").reshape(-1,number_grids,number_grids)
-        
-    #     return Simulation(coords, topo, wd, vx, vy)
     
+    @staticmethod
+    def load_topo_waterlevels(save_folder, sim_amount, number_grids, random_state=42):
+        """
+        
+        """
+        fnames = os.listdir(save_folder + "\\DEM")
+
+        if fnames[0].isupper():
+            name_dict = {"DEM":"DEM",
+                         "WD": "WD",
+                         "VX": "VX",
+                         "VY": "VY"}
+        else:
+            name_dict = {"DEM":"dem",
+                         "WD": "wd",
+                         "VX": "vx",
+                         "VY": "vy"}
+
+        if sim_amount > len(fnames):
+            raise Exception(f"Please select an amount smaller than {len(fnames)}.")
+        
+        np.random.seed(random_state)
+        idx = random.sample(range(len(fnames)), sim_amount)
+        wd = []
+        topo = []
+
+        for i in range(sim_amount):
+            name = fnames[idx[i]]
+
+            topo.append(np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids))
+            wd.append(np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids))
+
+        return wd, topo
+
 
     def __init__(self, coordinates, topography, wd, vx, vy):
         """
