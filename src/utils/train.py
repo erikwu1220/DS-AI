@@ -58,6 +58,7 @@ def train(
         channels=2,
         sim_amount=3,
         training_size=0.8,
+        use_augmented_data=True,
         batch_size=4,
         T=5,
         H=1,
@@ -78,6 +79,7 @@ def train(
     - channels (int): number of channels that the loaded model is compatible with (default 2, i.e. DEM & WED);
     - sim_amount (int): number of simulations of which the data is loaded and used for training, with a maximum of 400;
     - training_size (float): fraction of data to use for training (validation uses the fraction 1 - training_size);
+    - use_augmented_data (boolean): if True, the train function will include augmented data when (randomly) selecting training and validation data;
     - batch_size (int): batch size used during training (you can modify this based on your requirements);
     - T (int): number of input time steps. Make sure this number is compatible with the defined model;
     - H (int): number of predicted time steps (default 1). Make sure this number is compatible with the defined model;
@@ -92,9 +94,9 @@ def train(
     """
     # load simulations to be used for training
     if channels == 2:
-        sims = WaterTopo.load_simulations(str(root)+"/data/normalized_data/tra_val", sim_amount=sim_amount, number_grids=64)
+        sims = WaterTopo.load_simulations(str(root)+"/data/normalized_data/tra_val", sim_amount=sim_amount, number_grids=64, use_augmented_data=use_augmented_data)
     elif channels == 4:
-        sims = Simulation.load_simulations(str(root)+"/data/normalized_data/tra_val", sim_amount=sim_amount, number_grids=64)
+        sims = Simulation.load_simulations(str(root)+"/data/normalized_data/tra_val", sim_amount=sim_amount, number_grids=64, use_augmented_data=use_augmented_data)
 
     X, Y = create_sequence(sims, T, H)
 
