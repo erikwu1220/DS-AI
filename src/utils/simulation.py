@@ -108,41 +108,6 @@ class Simulation():
 
         return sims
     
-    @staticmethod
-    def load_topo_waterlevels(save_folder, sim_amount, number_grids, random_state=42):
-        """
-        
-        """
-        fnames = os.listdir(save_folder + "\\DEM")
-
-        if fnames[0].isupper():
-            name_dict = {"DEM":"DEM",
-                         "WD": "WD",
-                         "VX": "VX",
-                         "VY": "VY"}
-        else:
-            name_dict = {"DEM":"dem",
-                         "WD": "wd",
-                         "VX": "vx",
-                         "VY": "vy"}
-
-        if sim_amount > len(fnames):
-            raise Exception(f"Please select an amount smaller than {len(fnames)}.")
-        
-        np.random.seed(random_state)
-        idx = random.sample(range(len(fnames)), sim_amount)
-        wd = []
-        topo = []
-
-        for i in range(sim_amount):
-            name = fnames[idx[i]]
-
-            topo.append(np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids))
-            wd.append(np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids))
-
-        return wd, topo
-
-
     def __init__(self, coordinates, topography, wd, vx, vy):
         """
         A class that contains for a simulation:
