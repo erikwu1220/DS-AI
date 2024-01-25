@@ -9,7 +9,7 @@ import random
 
 class WaterTopo():
     @staticmethod
-    def load_simulations(save_folder, sim_amount, number_grids, use_augmented=False, random_state=42):
+    def load_simulations(save_folder, sim_amount, number_grids, use_augmented_data=True, random_state=42):
         """
         Static method to create a simulation from a filepath.
         - save_folder: string, that provides the filepath of where to look for the following folders:
@@ -24,8 +24,8 @@ class WaterTopo():
         - List of Simulation objects.
         """
         fnames = os.listdir(save_folder + "\\DEM")
-        
-        if not use_augmented:
+
+        if not use_augmented_data:
             fnames = [name for name in fnames if "o" in name]
 
         if fnames[0].isupper():
