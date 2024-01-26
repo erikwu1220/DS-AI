@@ -1,3 +1,18 @@
+import torch
+import time
+
+import numpy as np
+import torch.nn as nn
+import torch.optim as optim
+
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+
+from utils.watertopo import WaterTopo
+from utils.simulation import Simulation
+
+from utils.utils import create_sequence
+
 def evaluate_model(model, test_loader, criterion, device):
     model.eval()  # Set the model to evaluation mode
     test_loss = 0
@@ -55,19 +70,20 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, nu
 
 def train(
         model,
+        device,
+        root,
+        model_name,
         channels=2,
+        T=5,
+        H=1,
         sim_amount=3,
         training_size=0.8,
         use_augmented_data=True,
         batch_size=4,
-        T=5,
-        H=1,
         num_epochs = 200,
         lr = 0.0005,
         criterion = nn.MSELoss(),
         optimizer = optim.AdamW,
-        device = device,
-        model_name = 'model_lstm'
         ):
 
     """
