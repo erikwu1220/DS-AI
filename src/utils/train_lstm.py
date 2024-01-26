@@ -42,7 +42,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, nu
         for inputs, targets in train_loader:
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs)[0][-1]
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
@@ -124,8 +124,7 @@ def train(
     
     # Split the existing test dataset into validation and test sets (50/50 split)
     X_val, X_tst, Y_val, Y_tst, ix_val, ix_tst = train_test_split(
-        X_tst, Y_tst, ix_tst, test_size=0.5, shuffle=True, random_state=42)
-    
+        X_tst, Y_tst, ix_tst, test_size=0.5, shuffle=True, random_state=42)    
     
     #create datasets and data loaders
     train_dataset = TensorDataset(torch.tensor(X_tra, dtype=torch.float32), torch.tensor(Y_tra, dtype=torch.float32))
