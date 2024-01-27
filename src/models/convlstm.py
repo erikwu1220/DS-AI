@@ -84,7 +84,7 @@ class Encoder(nn.Module):
             layer_output = torch.stack(output_inner, dim=1)
             cur_layer_input = layer_output
             
-        return layer_output # , [h, c]
+        return layer_output  #, [h, c]
     
     
 class Decoder(nn.Module):
