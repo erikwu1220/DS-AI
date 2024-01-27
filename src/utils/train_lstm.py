@@ -13,14 +13,14 @@ from utils.simulation import Simulation
 
 from utils.utils import create_sequence
 
-def evaluate_model(model, test_loader, criterion, device):
+def evaluate_model(model, hidden, test_loader, criterion, device):
     model.eval()  # Set the model to evaluation mode
     test_loss = 0
 
     with torch.no_grad():  # No need to track gradients during evaluation
         for inputs, targets in test_loader:
             inputs, targets = inputs.to(device), targets.to(device)
-            outputs = model(inputs)
+            outputs, hidden = model(inputs, hidden)
             loss = criterion(outputs, targets)
             test_loss += loss.item()
 
@@ -28,7 +28,7 @@ def evaluate_model(model, test_loader, criterion, device):
     return avg_test_loss
 
 
-def train_and_validate(model, train_loader, val_loader, criterion, optimizer, num_epochs, device, save_path):
+def train_and_validate(model, train_loader, val_loader, criterion, optimizer, num_epochs, device, save_path, batch_size):
     best_val_loss = float("inf")  # Track the best validation loss
     train_losses = []
     val_losses = []
@@ -39,10 +39,16 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, nu
         # Training Phase
         model.train()
         total_train_loss = 0
+
+        hidden = model._init_hidden(batch_size, (64,64))
+
         for inputs, targets in train_loader:
             inputs, targets = inputs.to(device), targets.to(device)
             optimizer.zero_grad()
-            outputs = model(inputs)[0][-1]
+
+            hidden[0].detach_(), hidden[1].detach_()
+            outputs, hidden = model(inputs, hidden)
+
             loss = criterion(outputs, targets)
             loss.backward()
             optimizer.step()
@@ -52,7 +58,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, nu
         train_losses.append(avg_train_loss)
 
         # Validation Phase
-        avg_val_loss = evaluate_model(model, val_loader, criterion, device)
+        avg_val_loss = evaluate_model(model, hidden, val_loader, criterion, device)
         val_losses.append(avg_val_loss)
 
         # Save Best Model
