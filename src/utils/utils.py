@@ -1,10 +1,10 @@
 import numpy as np
+import torch
 from utils.watertopo import WaterTopo
 from utils.simulation import Simulation
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
 
 def create_sequence(series, T=5, H=1):
     """
@@ -54,3 +54,52 @@ def create_sequence(series, T=5, H=1):
                 Y[j+t+T: j+t+T+H, :,2,:,:] = serie.vy[t+T:t+T+H]
 
     return X, Y
+
+
+def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
+    """
+    Recursively predicts next time step given a certain input.
+    - model: Neural network
+    - inputs: array-like: first time-step, including topography. Shape should be [channels x height x width]
+    - timesteps: int, number of timesteps to predict.
+    - include_first_timestep: bool, whether to include the input timestep in the output.
+    
+    returns:
+    - mse: model output at everytimestep, with shape [timesteps x channels x height x width]
+    """
+    model.eval()
+    
+    outputs = torch.zeros([1, timesteps+1, 2, inputs.shape[-2], inputs.shape[-1]])
+
+    if not isinstance(inputs, torch.Tensor):
+        inputs = torch.tensor(inputs, dtype=torch.float32)
+    
+    outputs[:,:,0,:,:] = torch.tile(inputs[0], dims=[timesteps+1,1,1])
+
+    for t in range(1, timesteps):
+        outputs[:,t,1,:,:] = model(outputs[:,t-1,:,:,:])
+
+    if not include_first_timestep:
+        outputs = outputs[:,1:,:,:,:]
+
+    return outputs[0,:,1,:,:]
+
+
+def mse_per_timestep(targets, outputs):
+    """
+    Calculates the MSE for each timestep between the targets and outputs.
+    - targets: numpy-array, model targets
+    - outputs: torch-array, model predictions
+    
+    returns:
+    - mse: numpy array with MSE of each timestep
+    """
+    from sklearn.metrics import mean_squared_error
+    targets = targets.squeeze()
+    
+    timesteps = outputs.shape[0]
+    mse = np.zeros(timesteps)
+    for t in range(timesteps):
+        mse[t] = mean_squared_error(targets[t], outputs[t].detach().numpy())
+
+    return mse
