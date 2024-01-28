@@ -65,7 +65,6 @@ class Up(nn.Module):
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
-
 class OutConv(nn.Module):
     def __init__(self, in_channels, out_channels):
         super(OutConv, self).__init__()
@@ -96,17 +95,16 @@ class Encoder(nn.Module):
         intermediate_output = []
 
         x = self.in_layer(x)
-        intermediate_output.append(x)
 
         for i, layer in enumerate(self.enc_blocks):
-            x = layer(x)
             intermediate_output.append(x)
+            x = layer(x)
 
         return x, intermediate_output
     
 class Decoder(nn.Module):
     def __init__(self, hidden_channels, out_channels, bilinear=False):
-        super(Encoder, self).__init__()
+        super(Decoder, self).__init__()
         self.hidden_channels = hidden_channels
         self.out_channels = out_channels
         self.bilinear = bilinear
@@ -115,15 +113,17 @@ class Decoder(nn.Module):
         self.layer_list = []
         for i in range(len(hidden_channels)-2):
             self.layer_list.append(Up(list(reversed(hidden_channels))[i],
-                                    list(reversed(hidden_channels))[i+1],
+                                    list(reversed(hidden_channels))[i+1]//factor,
                                     bilinear))
-             
-        self.layer_list.append(Down(hidden_channels[-2], hidden_channels[-1] // factor))
+            
+        self.layer_list.append(Up(hidden_channels[1],
+                                  hidden_channels[0],
+                                  bilinear))
+        
         self.dec_blocks = nn.ModuleList(self.layer_list)
         self.out_layer = OutConv(hidden_channels[0], out_channels)
 
     def forward(self, x, intermediate_output):
-        intermediate_output = []
 
         for i, layer in enumerate(self.dec_blocks):
             x = layer(x, intermediate_output[-(i+1)])
@@ -150,8 +150,8 @@ class UNet(nn.Module):
         self.out_channels = out_channels
         self.bilinear = bilinear
 
-        self.encoder = Encoder(hidden_channels, bilinear)
-        self.decoder = Decoder(hidden_channels, bilinear)
+        self.encoder = Encoder(in_channels, hidden_channels, bilinear)
+        self.decoder = Decoder(hidden_channels, out_channels, bilinear)
 
     def forward(self, x):
         x, intermediate_output = self.encoder(x)
