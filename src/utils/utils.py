@@ -66,9 +66,7 @@ def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
     
     returns:
     - mse: model output at everytimestep, with shape [timesteps x channels x height x width]
-    """
-    model.eval()
-    
+    """   
     outputs = torch.zeros([1, timesteps+1, 2, inputs.shape[-2], inputs.shape[-1]])
 
     if not isinstance(inputs, torch.Tensor):
@@ -95,7 +93,7 @@ def mse_per_timestep(targets, outputs):
     - mse: numpy array with MSE of each timestep
     """
     from sklearn.metrics import mean_squared_error
-    targets = targets.squeeze()
+    # targets = targets.squeeze()
     
     timesteps = outputs.shape[0]
     mse = np.zeros(timesteps)
