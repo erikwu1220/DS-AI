@@ -74,7 +74,7 @@ def train(
         root,
         model_name,
         channels=2,
-        T=5,
+        T=1,
         H=1,
         sim_amount=3,
         training_size=0.8,
@@ -92,18 +92,20 @@ def train(
     
     Description of arguments:
     - model: the model to be trained, should be an instance of the class SimpleRNN;
-    - channels (int): number of channels that the loaded model is compatible with (default 2, i.e. DEM & WED);
+    - device: the device used for training the model (i.e. CUDA [GPU] or CPU).
+    - root: root folder
+    - channels (int): 2 or 4, number of channels that the loaded model is compatible with (default 2, i.e. DEM & WED);
+    - T (int): number of input time steps. Make sure this number is compatible with the defined model;
+    - H (int): number of predicted time steps (default 1). Make sure this number is compatible with the defined model;
     - sim_amount (int): number of simulations of which the data is loaded and used for training, with a maximum of 400;
     - training_size (float): fraction of data to use for training (validation uses the fraction 1 - training_size);
     - use_augmented_data (boolean): if True, the train function will include augmented data when (randomly) selecting training and validation data;
     - batch_size (int): batch size used during training (you can modify this based on your requirements);
-    - T (int): number of input time steps. Make sure this number is compatible with the defined model;
-    - H (int): number of predicted time steps (default 1). Make sure this number is compatible with the defined model;
     - num_epochs (int): number of epochs used during training;
     - lr (float): learning rate used during training;
     - criterion: Loss function, default nn.MSELoss()
     - optimizer: optimizer used for training, default optim.AdamW
-    - defice: the device used for training the model (i.e. CUDA [GPU] or CPU).
+    
     - model_name (string): the best model state will be saved in ../results/trained_models/ under this name
 
     returns: model, train_losses, val_losses, best_val_loss, time

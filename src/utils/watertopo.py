@@ -23,12 +23,12 @@ class WaterTopo():
         return:
         - List of Simulation objects.
         """
-        fnames = os.listdir(save_folder + "\\DEM")
+        fnames = os.listdir(save_folder + "/DEM")
 
         if not use_augmented_data:
             fnames = [name for name in fnames if "o" in name]
-
-        if fnames[0].isupper():
+            
+        if fnames[0][0].isupper():
             name_dict = {"DEM":"DEM",
                          "WD": "WD"}
         else:
@@ -45,8 +45,8 @@ class WaterTopo():
         for i in range(sim_amount):
             name = fnames[idx[i]]
 
-            topo = np.loadtxt(f"{save_folder}\\DEM\\" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
-            wd = np.loadtxt(f"{save_folder}\\WD\\" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
+            topo = np.loadtxt(f"{save_folder}/DEM/" + name_dict["DEM"] + name[3:])[:, 2].reshape(number_grids,number_grids)
+            wd = np.loadtxt(f"{save_folder}/WD/" + name_dict["WD"] + name[3:]).reshape(-1,number_grids,number_grids)
 
             sims.append(WaterTopo(topo, wd))
 
