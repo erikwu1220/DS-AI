@@ -51,9 +51,9 @@ def create_sequence(series, T=5, H=1, skip=0):
                 X[j+t:j+t+T, :,2,:,:] = serie.wd[t:t+T]
                 X[j+t:j+t+T, :,3,:,:] = serie.wd[t:t+T]
 
-                Y[j+t+T: j+t+T+H, :,0,:,:] = serie.wd[t+T:t+T+H]
-                Y[j+t+T: j+t+T+H, :,1,:,:] = serie.vx[t+T:t+T+H]
-                Y[j+t+T: j+t+T+H, :,2,:,:] = serie.vy[t+T:t+T+H]
+                Y[j+t+T: j+t+T+H, :,0,:,:] = serie.wd[t+T+skip:t+T+H+skip]
+                Y[j+t+T: j+t+T+H, :,1,:,:] = serie.vx[t+T+skip:t+T+H+skip]
+                Y[j+t+T: j+t+T+H, :,2,:,:] = serie.vy[t+T+skip:t+T+H+skip]
 
     return X, Y
 
