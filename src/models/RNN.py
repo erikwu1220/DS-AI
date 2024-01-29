@@ -104,10 +104,10 @@ class CNN(nn.Module):
 
 
 class AdvancedRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, num_steps):
+    def __init__(self, input_size, hidden_size, output_size, num_steps):
         super(AdvancedRNN, self).__init__()
         # RNN layer
-        self.rnn = nn.RNN(input_size=1, hidden_size=hidden_size, batch_first=True, nonlinearity='relu')
+        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size, batch_first=True, nonlinearity='relu')
 
         # Output layer
         self.fc = nn.Linear(hidden_size, output_size)
