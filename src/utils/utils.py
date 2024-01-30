@@ -58,6 +58,30 @@ def create_sequence(series, T=5, H=1, skip=0):
     return X, Y
 
 
+def distance_to_nonzero(matrix):
+    matrix = np.array(matrix)
+    rows, cols = matrix.shape
+
+    # Create an array with indices corresponding to each element in the input matrix
+    indices = np.indices((rows, cols), dtype=float)
+
+    # Find the indices where the matrix is nonzero
+    nonzero_indices = np.argwhere(matrix != 0)
+
+    # Calculate distances using broadcasting
+    distances = np.abs(indices[0][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 0]) + \
+                np.abs(indices[1][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 1])
+
+    # Find the minimum distance for each element and set the result matrix
+    result_matrix = np.min(distances, axis=-1)
+
+    return result_matrix
+
+def get_mask(matrix, value):
+    distance_matrix = distance_to_nonzero(matrix)
+    return distance_matrix < value
+
+
 def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
     """
     Recursively predicts next time step given a certain input.
