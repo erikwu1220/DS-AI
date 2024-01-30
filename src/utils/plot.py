@@ -14,7 +14,12 @@ def compare_simulations_slider(wds_, labels, total_time=96):
         def update_slider(val):
             for i in range(len(wds_)):
                 skips = total_time // len(wds_[i])
-                frame_index = val // (skips+1)
+
+                frame_index = val // (skips + 1)
+                # frame_index = val
+                # if skips:
+                #      frame_index //= skips
+                #      frame_index -= 1
                 imgs[i].set_array(wds_[i][frame_index])
 
                 # redraw canvas while idle
@@ -37,7 +42,9 @@ def compare_simulations_slider(wds_, labels, total_time=96):
 
         # Add a slider
         ax_slider = plt.axes([0.1, 0.01, 0.65, 0.03], facecolor='lightgoldenrodyellow')
-        slider = Slider(ax_slider, 'Frame', 0, total_time, valinit=0, valstep=1)
+        slider = Slider(ax_slider, 'Timestep', 0, total_time, valinit=0, valstep=1)
         slider.on_changed(update_slider)
 
         plt.show()
+
+        return slider

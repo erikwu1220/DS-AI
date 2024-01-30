@@ -60,7 +60,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, nu
             best_val_loss = avg_val_loss
             torch.save(model.state_dict(), save_path)
 
-        if (epoch + 1) % 20 == 0:
+        if (epoch + 1) % 5 == 0:
             print(f'Epoch {epoch+1}/{num_epochs}', f'Train Loss: {avg_train_loss:.4f}, '
                   f'Validation Loss: {avg_val_loss:.4f}', f'Best Validation Loss: {best_val_loss:.4f}')
     train_time = time.time() - start_time
