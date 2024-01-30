@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
 from matplotlib.widgets import Slider
 
-def compare_animations(wds_, labels, total_time=96):
+def compare_simulations_slider(wds_, labels, total_time=96):
         """
         in:
         - wd, list of waterlevels to compare
@@ -21,13 +23,15 @@ def compare_animations(wds_, labels, total_time=96):
         
         height = len(wds_) // 3 + 1
         width = len(wds_) // height
+        vmin = 0
+        vmax = np.max(wds_[0])
 
         fig, axs = plt.subplots(height, width)
         axs = axs.ravel()
 
         imgs = []
         for i in range(len(wds_)):
-            im = axs[i].imshow(wds_[i][0], cmap="Blues", origin='lower', animated=True)
+            im = axs[i].imshow(wds_[i][0], vmin=vmin, vmax=vmax, cmap="Blues", origin='lower', animated=True)
             imgs.append(im)
             axs[i].set_title(f"{labels[i]}")
 
