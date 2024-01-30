@@ -1,10 +1,10 @@
 import os
 import glob
+import random
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 
 
 class WaterTopo():
@@ -60,6 +60,10 @@ class WaterTopo():
         """
         self.topography = topography
         self.wd = wd
+
+    def implement_skips(self, skips):
+        wd_skips = self.wd[::skips+1, :, :]
+        return WaterTopo(self.topography, wd_skips)
 
     def return_timestep(self, timestep):
         """

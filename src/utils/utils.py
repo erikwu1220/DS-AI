@@ -74,6 +74,7 @@ def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
     if not isinstance(inputs, torch.Tensor):
         inputs = torch.tensor(inputs, dtype=torch.float32)
     
+    outputs[:,0,:,:,:] = inputs[1]
     outputs[:,:,0,:,:] = torch.tile(inputs[0], dims=[timesteps+1,1,1])
 
     for t in range(1, timesteps):
