@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import numpy as np
 
 class DoubleConv(nn.Module):
     """(convolution => [BN] => ReLU) * 2"""
@@ -153,7 +153,44 @@ class UNet_mask(nn.Module):
         self.encoder = Encoder(in_channels, hidden_channels, bilinear)
         self.decoder = Decoder(hidden_channels, out_channels, bilinear)
 
+        self.distance = nn.Parameter(torch.rand(1), requires_grad=True)
+
     def forward(self, x):
+        inputs = x
         x, intermediate_output = self.encoder(x)
         x = self.decoder(x, intermediate_output)
-        return x
+
+        output = torch.empty_like(x)
+        # Loop through the batch
+        for i in range(x.shape[0]):
+            # Generate a mask
+            mask = self.get_mask(inputs[i,1,:,:], self.distance)
+
+            # Apply mask to the output
+            output[i] = x[i] * mask
+        
+        print(self.distance, self.distance.grad)
+
+        return output
+
+    def distance_to_nonzero(self, matrix):
+        rows, cols = matrix.shape
+
+        # Create an array with indices corresponding to each element in the input matrix
+        indices = torch.meshgrid(torch.arange(rows), torch.arange(cols), indexing="ij")
+
+        # Find the indices where the matrix is nonzero
+        nonzero_indices = torch.nonzero(matrix, as_tuple=True)
+
+        # Calculate distances using broadcasting
+        distances = torch.abs(indices[0][:, :, None, None] - nonzero_indices[0]) + \
+                    torch.abs(indices[1][:, :, None, None] - nonzero_indices[1])
+
+        # Find the minimum distance for each element and set the result matrix
+        result_matrix, _ = torch.min(distances, dim=-1)
+
+        return result_matrix.squeeze()
+
+    def get_mask(self, matrix, value):
+        distance_matrix = self.distance_to_nonzero(matrix)
+        return torch.lt(distance_matrix, value)
