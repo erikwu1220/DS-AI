@@ -125,3 +125,53 @@ def get_corner(wd):
     else:
         corner = 4
     return corner
+
+
+def distance_to_nonzero(matrix):
+    """"
+    Example usage:
+    input_matrix = [
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0]
+    ]
+
+    result_np = distance_to_nonzero(input_matrix)[:,:,0]
+    """
+    matrix = np.array(matrix)
+    rows, cols = matrix.shape
+
+    # Create an array with indices corresponding to each element in the input matrix
+    indices = np.indices((rows, cols), dtype=float)
+
+    # Find the indices where the matrix is nonzero
+    nonzero_indices = np.argwhere(matrix != 0)
+
+    # Calculate distances using broadcasting
+    distances = np.abs(indices[0][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 0]) + \
+                np.abs(indices[1][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 1])
+
+    # Find the minimum distance for each element and set the result matrix
+    result_matrix = np.min(distances, axis=-1)
+
+    return result_matrix
+
+
+def distance_torch(matrix):
+        rows, cols = matrix.shape
+
+        # Create an array with indices corresponding to each element in the input matrix
+        indices = torch.meshgrid(torch.arange(rows), torch.arange(cols))
+
+        # Find the indices where the matrix is nonzero
+        nonzero_indices = torch.nonzero(matrix, as_tuple=True)
+
+        # Calculate distances using broadcasting
+        distances = torch.abs(indices[0][:, :, None, None] - nonzero_indices[0]) + \
+                    torch.abs(indices[1][:, :, None, None] - nonzero_indices[1])
+
+        # Find the minimum distance for each element and set the result matrix
+        result_matrix, _ = torch.min(distances, dim=-1)
+
+        return result_matrix
