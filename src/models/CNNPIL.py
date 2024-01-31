@@ -82,7 +82,7 @@ def physics_loss(outputs, targets, timesteps, alpha):
     V_total_output = torch.sum(outputs * 6400**2, axis=(1, 2, 3))
     l1 = nn.MSELoss()
     loss1 = l1(outputs, targets)
-    loss2 = alpha * torch.sum(torch.abs(V_total_output - V_total_targets_corrected))
+    loss2 = alpha * torch.sum(torch.abs(V_total_output - V_total_targets_corrected)) * 1/(64**2)
 
     return loss1 + loss2
 
