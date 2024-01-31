@@ -175,11 +175,10 @@ class UNet_mask(nn.Module):
             
             else:
                 # Generate a mask
-                mask = self.get_mask(inputs[i,1,:,:], self.distance)
+                mask = self.get_mask(inputs[i,1,:,:])
 
                 # Apply mask to the output
                 output[i] = x[i] * mask
-
 
         return output
 
@@ -202,6 +201,6 @@ class UNet_mask(nn.Module):
 
         return result_matrix.squeeze().to(matrix.device)
 
-    def get_mask(self, matrix):
+    def get_mask(self, matrix, threshold = 1e-4):
         distance_matrix = self.distance_to_nonzero(matrix)
-        return torch.lt(distance_matrix, self.distance*10)
+        return torch.lt(distance_matrix, self.distance + threshold)
