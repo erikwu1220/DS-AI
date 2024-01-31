@@ -27,7 +27,7 @@ def compare_simulations_slider(wds_, labels, total_time=96):
 
         
         width = 2
-        height = len(wds_) // width + 1
+        height = len(wds_) // width + len(wds_) % width
 
         vmin = 0
         vmax = np.max(wds_[0])
