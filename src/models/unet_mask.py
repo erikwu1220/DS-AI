@@ -176,6 +176,7 @@ class UNet_mask(nn.Module):
         return output
 
     def distance_to_nonzero(self, matrix):
+
         rows, cols = matrix.shape
 
         # Create an array with indices corresponding to each element in the input matrix
