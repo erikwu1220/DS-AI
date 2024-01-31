@@ -133,7 +133,7 @@ class Decoder(nn.Module):
 
 
 class UNet_mask(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, bilinear=False):
+    def __init__(self, in_channels, hidden_channels, out_channels, distance = None, bilinear=False):
         """
         Class derived from U-Net with some modifications to give more flexibility to the layer size.
         Also renamed some variables to be more specific to our application.
@@ -153,25 +153,33 @@ class UNet_mask(nn.Module):
         self.encoder = Encoder(in_channels, hidden_channels, bilinear)
         self.decoder = Decoder(hidden_channels, out_channels, bilinear)
 
-        self.distance = nn.Parameter(torch.rand(1), requires_grad=True)
+        if not distance:
+            self.distance = nn.Parameter(torch.rand(1), requires_grad=True)
+        else:
+            self.distance = distance
 
     def forward(self, x):
         inputs = x
         x, intermediate_output = self.encoder(x)
         x = self.decoder(x, intermediate_output)
 
-        output = torch.empty_like(x)
+        output = torch.empty_like(x) # .to(matrix.device)
+
         # Loop through the batch
         for i in range(x.shape[0]):
-            # # Generate a mask
-            # mask = self.get_mask(inputs[i,1,:,:], self.distance)
 
-            # # Apply mask to the output
-            # output[i] = x[i] * mask
+            if isinstance(self.distance, torch.nn.parameter.Parameter):
+                distance_matrix = self.distance_to_nonzero(inputs[i,1,:,:])
+                distance_matrix[distance_matrix == 0] = 1
+                output[i] = x[i] * distance_matrix ** (-self.distance * 10)
+            
+            else:
+                # Generate a mask
+                mask = self.get_mask(inputs[i,1,:,:], self.distance)
 
-            distance_matrix = self.distance_to_nonzero(inputs[i,1,:,:])
-            distance_matrix[distance_matrix == 0] = 1
-            output[i] = x[i] * distance_matrix ** (-self.distance * 10)
+                # Apply mask to the output
+                output[i] = x[i] * mask
+
 
         return output
 
@@ -185,13 +193,13 @@ class UNet_mask(nn.Module):
         nonzero_indices = torch.nonzero(matrix, as_tuple=True)
 
         # Calculate distances using broadcasting
-        distances = torch.abs(indices[0][:, :, None, None] - nonzero_indices[0]) + \
-                    torch.abs(indices[1][:, :, None, None] - nonzero_indices[1])
+        distances = torch.abs(indices[0].to(matrix.device)[:, :, None, None] - nonzero_indices[0]) + \
+                    torch.abs(indices[1].to(matrix.device)[:, :, None, None] - nonzero_indices[1])
 
         # Find the minimum distance for each element and set the result matrix
         result_matrix, _ = torch.min(distances, dim=-1)
 
-        return result_matrix.squeeze()
+        return result_matrix.squeeze().to(matrix.device)
 
     def get_mask(self, matrix):
         distance_matrix = self.distance_to_nonzero(matrix)
