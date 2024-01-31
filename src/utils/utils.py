@@ -34,8 +34,7 @@ def create_sequence(series, T=5, H=1, skip=0):
     num_sims = len(series)
 
     X = np.zeros((seq_per_sim*num_sims, T, channels, height, width))
-    Y = np.zeros((seq_per_sim*num_sims, H,  channels-1, height, width))
-    # Y = np.zeros((seq_per_sim*num_sims, H, channels-1, height, width))
+    Y = np.zeros((seq_per_sim*num_sims, H, channels-1, height, width))
 
     for i,serie in enumerate(series):
         j = i * seq_per_sim
@@ -44,8 +43,8 @@ def create_sequence(series, T=5, H=1, skip=0):
                 X[j+t:j+t+T, :,0,:,:] = np.tile(serie.topography, (T,1,1))
                 X[j+t:j+t+T, :,1,:,:] = serie.wd[t:t+T]
                 
-                # Y[j+t+T : j+t+T+H, :,:,:,:] = serie.wd[t+T+skip:t+T+H+skip]
-                Y[0,:,0,:,:] = serie.wd[t+T+skip:t+T+H+skip]
+                Y[j+t+T : j+t+T+H, :,:,:,:] = serie.wd[t+T+skip:t+T+H+skip]
+                # Y[0,:,0,:,:] = serie.wd[t+T+skip:t+T+H+skip]
 
             elif channels == 4:
                 X[j+t:j+t+T, :,0,:,:] = np.tile(serie.topography, (T,1,1))
