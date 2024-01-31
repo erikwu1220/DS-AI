@@ -163,13 +163,15 @@ class UNet_mask(nn.Module):
         output = torch.empty_like(x)
         # Loop through the batch
         for i in range(x.shape[0]):
-            # Generate a mask
-            mask = self.get_mask(inputs[i,1,:,:], self.distance)
+            # # Generate a mask
+            # mask = self.get_mask(inputs[i,1,:,:], self.distance)
 
-            # Apply mask to the output
-            output[i] = x[i] * mask
-        
-        print(self.distance, self.distance.grad)
+            # # Apply mask to the output
+            # output[i] = x[i] * mask
+
+            distance_matrix = self.distance_to_nonzero(inputs[i,1,:,:])
+            distance_matrix[distance_matrix == 0] = 1
+            output[i] = x[i] * distance_matrix ** (-self.distance * 10)
 
         return output
 
@@ -191,6 +193,6 @@ class UNet_mask(nn.Module):
 
         return result_matrix.squeeze()
 
-    def get_mask(self, matrix, value):
+    def get_mask(self, matrix):
         distance_matrix = self.distance_to_nonzero(matrix)
-        return torch.lt(distance_matrix, value)
+        return torch.lt(distance_matrix, self.distance*10)
