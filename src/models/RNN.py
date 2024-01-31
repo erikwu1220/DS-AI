@@ -50,7 +50,7 @@ class nextgen_rnn(nn.Module):
     def __init__(self, num_layers, input_size, hidden_size, output_size, sequence_length):
         super(nextgen_rnn, self).__init__()
         # RNN layer
-        self.rnn = nn.RNN(input_size=input_size, hidden_size=hidden_size, num_layers = num_layers,  batch_first=True)
+        self.rnn = nn.RNN(input_size=j, hidden_size=hidden_size, num_layers = num_layers,  batch_first=True)
 
         # Output layer
         self.fc = nn.Linear(hidden_size, output_size)
