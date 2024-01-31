@@ -26,8 +26,9 @@ def compare_simulations_slider(wds_, labels, total_time=96):
                 fig.canvas.draw_idle()
 
         
-        height = len(wds_) // 3 + 1
-        width = len(wds_) // height
+        width = 2
+        height = len(wds_) // width + 1
+
         vmin = 0
         vmax = np.max(wds_[0])
 

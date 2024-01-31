@@ -34,7 +34,8 @@ def create_sequence(series, T=5, H=1, skip=0):
     num_sims = len(series)
 
     X = np.zeros((seq_per_sim*num_sims, T, channels, height, width))
-    Y = np.zeros((seq_per_sim*num_sims, H, channels-1, height, width))
+    Y = np.zeros((seq_per_sim*num_sims, H,  channels-1, height, width))
+    # Y = np.zeros((seq_per_sim*num_sims, H, channels-1, height, width))
 
     for i,serie in enumerate(series):
         j = i * seq_per_sim
@@ -43,7 +44,8 @@ def create_sequence(series, T=5, H=1, skip=0):
                 X[j+t:j+t+T, :,0,:,:] = np.tile(serie.topography, (T,1,1))
                 X[j+t:j+t+T, :,1,:,:] = serie.wd[t:t+T]
                 
-                Y[j+t+T : j+t+T+H, :,:,:,:] = serie.wd[t+T+skip:t+T+H+skip]
+                # Y[j+t+T : j+t+T+H, :,:,:,:] = serie.wd[t+T+skip:t+T+H+skip]
+                Y[0,:,0,:,:] = serie.wd[t+T+skip:t+T+H+skip]
 
             elif channels == 4:
                 X[j+t:j+t+T, :,0,:,:] = np.tile(serie.topography, (T,1,1))
@@ -56,30 +58,6 @@ def create_sequence(series, T=5, H=1, skip=0):
                 Y[j+t+T: j+t+T+H, :,2,:,:] = serie.vy[t+T+skip:t+T+H+skip]
 
     return X, Y
-
-
-def distance_to_nonzero(matrix):
-    matrix = np.array(matrix)
-    rows, cols = matrix.shape
-
-    # Create an array with indices corresponding to each element in the input matrix
-    indices = np.indices((rows, cols), dtype=float)
-
-    # Find the indices where the matrix is nonzero
-    nonzero_indices = np.argwhere(matrix != 0)
-
-    # Calculate distances using broadcasting
-    distances = np.abs(indices[0][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 0]) + \
-                np.abs(indices[1][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 1])
-
-    # Find the minimum distance for each element and set the result matrix
-    result_matrix = np.min(distances, axis=-1)
-
-    return result_matrix
-
-def get_mask(matrix, value):
-    distance_matrix = distance_to_nonzero(matrix)
-    return distance_matrix < value
 
 
 def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
@@ -149,3 +127,52 @@ def get_corner(wd):
     else:
         corner = 4
     return corner
+
+
+def distance_to_nonzero(matrix):
+    """"
+    Example usage:
+    input_matrix = [
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0]
+    ]
+
+    result_np = distance_to_nonzero(input_matrix)[:,:,0]
+    """
+    matrix = np.array(matrix)
+    rows, cols = matrix.shape
+
+    # Create an array with indices corresponding to each element in the input matrix
+    indices = np.indices((rows, cols), dtype=float)
+
+    # Find the indices where the matrix is nonzero
+    nonzero_indices = np.argwhere(matrix != 0)
+
+    # Calculate distances using broadcasting
+    distances = np.abs(indices[0][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 0]) + \
+                np.abs(indices[1][:, :, np.newaxis, np.newaxis] - nonzero_indices[:, 1])
+
+    # Find the minimum distance for each element and set the result matrix
+    result_matrix = np.min(distances, axis=-1)
+
+    return result_matrix
+
+def distance_torch(matrix):
+        rows, cols = matrix.shape
+
+        # Create an array with indices corresponding to each element in the input matrix
+        indices = torch.meshgrid(torch.arange(rows), torch.arange(cols))
+
+        # Find the indices where the matrix is nonzero
+        nonzero_indices = torch.nonzero(matrix, as_tuple=True)
+
+        # Calculate distances using broadcasting
+        distances = torch.abs(indices[0][:, :, None, None] - nonzero_indices[0]) + \
+                    torch.abs(indices[1][:, :, None, None] - nonzero_indices[1])
+
+        # Find the minimum distance for each element and set the result matrix
+        result_matrix, _ = torch.min(distances, dim=-1)
+
+        return result_matrix
