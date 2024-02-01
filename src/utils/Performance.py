@@ -18,9 +18,9 @@ def Performance(prediction,Real,*args,**kwargs):
         # Calculate accuracy
         acc = 1-np.divide((prediction[t] - Real[t]),Real[t])
         plt.figure(figsize=(6, 6))
-        plt.imshow(acc, cmap='RdBu_r', origin='lower')
+        plt.imshow(acc, cmap='RdBu', origin='lower')
         plt.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(vmin = 0, vmax=1),
-                                       cmap='RdBu_r'), fraction=0.05, shrink=0.9)
+                                       cmap='RdBu'), fraction=0.05, shrink=0.9)
         plt.title("Accuracy Map")
 
     if args[0] == 'animation':
@@ -33,18 +33,19 @@ def Performance(prediction,Real,*args,**kwargs):
         for i in range(len(prediction)):
             # Calculate accuracy
             acc = 1-np.divide((prediction[i] - Real[i]),Real[i])
+            ttl = plt.text(60, 5, f"timestep ={i}", horizontalalignment='right', verticalalignment='bottom')
+            im = plt.imshow(acc,cmap='RdBu', animated=True, origin='lower')
 
-            im = plt.imshow(acc,cmap='RdBu_r', animated=True, origin='lower')
-            ims.append([im])
+            ims.append([im,ttl])
         ni = ArtistAnimation(fig, ims, interval=1)
 
         # Srtting Figure Information
         plt.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(vmin = 0, vmax=1),
-                                       cmap='RdBu_r'), fraction=0.05, shrink=0.9)
-        plt.title("Accuracy Map")
+                                       cmap='RdBu'), fraction=0.05, shrink=0.9)
 
+        plt.title("Accuracy Map")
         # Srtting GIF Information
-        fps = 5
+        fps = 3
         writer = PillowWriter(fps=fps)
         ni.save(savepath, writer = writer)
 
