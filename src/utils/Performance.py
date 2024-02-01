@@ -16,7 +16,7 @@ def Performance(prediction,Real,*args,**kwargs):
         t = kwargs["timestep"]
 
         # Calculate accuracy
-        acc = np.divide((prediction[t] - Real[t]),Real[t])
+        acc = 1-np.divide((prediction[t] - Real[t]),Real[t])
         plt.figure(figsize=(6, 6))
         plt.imshow(acc, cmap='RdBu_r', origin='lower')
         plt.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(vmin = 0, vmax=1),
@@ -32,7 +32,7 @@ def Performance(prediction,Real,*args,**kwargs):
 
         for i in range(len(prediction)):
             # Calculate accuracy
-            acc = np.divide((prediction[i] - Real[i]),Real[i])
+            acc = 1-np.divide((prediction[i] - Real[i]),Real[i])
 
             im = plt.imshow(acc,cmap='RdBu_r', animated=True, origin='lower')
             ims.append([im])
