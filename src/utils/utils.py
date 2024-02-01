@@ -78,7 +78,7 @@ def recursive_pred(model, inputs, timesteps, include_first_timestep=False):
     outputs[:,0,:,:,:] = inputs[1]
     outputs[:,:,0,:,:] = torch.tile(inputs[0], dims=[timesteps+1,1,1])
 
-    for t in range(1, timesteps):
+    for t in range(1, timesteps+1):
         outputs[:,t,1,:,:] = model(outputs[:,t-1,:,:,:])
 
     if not include_first_timestep:
