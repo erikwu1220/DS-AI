@@ -1,0 +1,5 @@
+This folder contains the end-products of our project. It contains
+- [Trained models](https://github.com/erikwu1220/DS-AI/tree/main/src/results/trained_models): these can be loaded in using the proper class and arguments. The names of these models should be indicative of which data (timeskips) and model class was used.
+- [Dropout runs](https://github.com/erikwu1220/DS-AI/tree/main/src/results/dropout_runs): these are used for Monte-Carlo dropout. 
+- [Error accumulation](https://github.com/erikwu1220/DS-AI/tree/main/src/results/error_accumulation): used to collect MSEs of the models. These MSEs are averaged for [test set 1](https://github.com/erikwu1220/DS-AI/tree/main/data/normalized_data/test1) and plotted in time.
+- [Demo notebook](https://github.com/erikwu1220/DS-AI/blob/main/src/results/demo.ipynb): used in the presentation of the project.
