@@ -1,4 +1,6 @@
 import torch.nn as nn
+import torch
+
 class CNNBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, padding=1, bias=False, batch_norm=True):
         super().__init__()
