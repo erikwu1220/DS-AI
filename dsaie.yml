@@ -1,0 +1,21 @@
+# This environment is intended to be used by students working on the exercises.
+# It should contain the same packages as dsaie_dev, but none of the development
+# tools (nbdiff, spyder, jupyter-vim, jupyter-book, etc.).
+name: dsaie
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9.17
+  - dash=2.13.0
+  - ipympl=0.9.3
+  - jupyter=1.0.0
+  - jupyterlab=3.4.4
+  - matplotlib=3.5.2
+  - numpy=1.24.2
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - pandas=1.5.3
+  - scikit-learn=1.2.2
+  - scipy=1.9.3
+  - seaborn=0.12.2
