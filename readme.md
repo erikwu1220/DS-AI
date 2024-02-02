@@ -4,19 +4,16 @@
     <img src="src/images/logo.JPG" alt="Logo">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">Floods 4</h3>
 
   <p align="center">
-    project_description
+    The document serves to aid the visitor in understanding the content and purpose of this project. This project aims to use different implementations of neural networks as alternative to computationally expensive numerical models to predict the development of floods. To achieve this, the models are trained on numerical Delft3D simualations.
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/erikwu1220/DS-AI"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/erikwu1220/DS-AI/blob/main/src/results/demo.ipynb">View Demo</a>
+
   </p>
 </div>
 
