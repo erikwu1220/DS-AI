@@ -1,3 +1,2 @@
-Hello!
-
-Welcome to our project. We are happy you are here. If you want to rent my room from February 1st to April 15th, please call me. For any other business contact Kevin. 
+# Floods 4
+The document serves to aid the visitor in understanding the content and purpose of this project. This project aims to use different implementations of neural networks as alternative to computationally expensive numerical models to predict the development of floods. To achieve this, the models are trained on numerical Delft3D simualations.
