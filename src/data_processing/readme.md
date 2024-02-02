@@ -1,0 +1,3 @@
+This folder contains notebooks used to process the raw data for training.
+Data is [augmented](https://github.com/erikwu1220/DS-AI/blob/main/src/data_processing/data_augmentation.ipynb) by using a [custom pipeline](https://github.com/erikwu1220/DS-AI/blob/main/src/data_processing/augmentation_pipeline.py), rotating the dem files by [0°, 90°, 180°, 270°] and vertical/horizontal mirroring.
+Data is [normalized](https://github.com/erikwu1220/DS-AI/blob/main/src/data_processing/normalization_kevin.ipynb) by the min-max approach (water depth) and standard Gaussian approach (dem). 
