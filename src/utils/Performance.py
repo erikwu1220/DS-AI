@@ -4,7 +4,7 @@ from matplotlib.animation import ArtistAnimation, PillowWriter
 from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, precision_score, f1_score, classification_report
 import seaborn as sns
 
-def Performance(prediction,Real,*args,**kwargs):
+def performance(prediction,Real,*args,**kwargs):
     '''
     This function is used to present the accuracy of the pridicted result.
     The accuracy is based on computing the diffference of predicted water depth and true water depth of each pixel.
