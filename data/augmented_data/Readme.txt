@@ -1,1 +1,0 @@
-Normalized and augmented data, readily useable for training, validating & testing the model.
