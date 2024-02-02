@@ -12,7 +12,7 @@ def performance(prediction,Real,*args,**kwargs):
     '''
     prediction = np.array(prediction)
     Real = np.array(Real)
-
+    plt.rcParams.update({'font.size': 22})
 
     if args[0] == 'specific':
         print("Selecting specific timestep")
