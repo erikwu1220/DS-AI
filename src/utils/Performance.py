@@ -4,7 +4,7 @@ from matplotlib.animation import ArtistAnimation, PillowWriter
 from sklearn.metrics import confusion_matrix, accuracy_score, recall_score, precision_score, f1_score, classification_report
 import seaborn as sns
 
-def Performance(prediction,Real,*args,**kwargs):
+def performance(prediction,Real,*args,**kwargs):
     '''
     This function is used to present the accuracy of the pridicted result.
     The accuracy is based on computing the diffference of predicted water depth and true water depth of each pixel.
@@ -36,15 +36,15 @@ def Performance(prediction,Real,*args,**kwargs):
         for i in range(len(prediction)):
             # Calculate accuracy
             acc = 1-np.divide(abs((prediction[i] - Real[i])),Real[i])
-            ttl = plt.text(60, 5, f"timestep ={i}", horizontalalignment='right', verticalalignment='bottom')
-            im = plt.imshow(acc,cmap='RdBu', animated=True, origin='lower')
+            ttl = plt.text(60, 5, f"timestep ={i*6}", horizontalalignment='right', verticalalignment='bottom')
+            im = plt.imshow(acc,cmap='inferno_r', animated=True, origin='lower')
 
             ims.append([im,ttl])
         ni = ArtistAnimation(fig, ims, interval=1)
 
         # Srtting Figure Information
         plt.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(vmin = 0, vmax=1),
-                                       cmap='RdBu'), fraction=0.05, shrink=0.9)
+                                       cmap='inferno_r'), fraction=0.05, shrink=0.9)
 
         plt.title("Accuracy Map")
         # Srtting GIF Information
